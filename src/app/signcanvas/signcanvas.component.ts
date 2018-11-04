@@ -19,8 +19,8 @@ import { Event } from '../event';
 })
 export class SigncanvasComponent implements AfterViewInit, OnDestroy, OnInit {
 
-  @Input() width = 512;
-  @Input() height = 418;
+  @Input() width = 800;
+  @Input() height = 600;
   @ViewChild('canvas') canvas: ElementRef;
   cx: CanvasRenderingContext2D;
   drawingSubscription: Subscription;
@@ -36,20 +36,30 @@ export class SigncanvasComponent implements AfterViewInit, OnDestroy, OnInit {
     const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
     this.cx.clearRect(0, 0, canvasEl.width, canvasEl.height);
     this.ws.send({type:2});
+    this.ws.disconnect();
+    this.initIoConnection();
   }
   private initIoConnection(): void {
     this.ws.initSocket();
 
     this.ioConnection = this.ws.onMessage()
       .subscribe((message: any) => {
-        console.log(message);
-        this.messages.push(message);
+        
+        //this.messages.push(message);
         if(message.type == 1){
+          if (!this.cx) {
+            return;
+          }
+      
+          console.log(message);
           this.cx.lineTo(message.x, message.y);
-          this.cx.stroke();
+          if(message.x > 0 && message.y > 0){
+            this.cx.stroke();
+          }
         }else{
           const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
           this.cx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+          this.messages = [];
         }
       });
 
@@ -85,7 +95,6 @@ export class SigncanvasComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   captureEvents(canvasEl: HTMLCanvasElement) {
-    // this will capture all mousedown events from teh canvas element
     this.drawingSubscription = fromEvent(canvasEl, 'mousedown')
       .pipe(
         switchMap(e => {
@@ -105,11 +114,17 @@ export class SigncanvasComponent implements AfterViewInit, OnDestroy, OnInit {
 
         const currentPos = {
           type: 1,
+          prevPos: prevPos,
           x: res[1].clientX - rect.left,
           y: res[1].clientY - rect.top
         };
         this.drawOnCanvas(prevPos, currentPos);
-        this.ws.send(currentPos);
+        console.log("delay ? " + JSON.stringify(currentPos));
+        //console.log(res);
+        if(currentPos){
+          this.ws.send(currentPos);
+        }
+        
       });
   }
 
