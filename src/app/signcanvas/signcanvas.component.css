@@ -1,3 +1,11 @@
 canvas { 
     border: 1px solid #000; 
 }
+
+.button3 {background-color: #f44336;} 
+.button5 {
+    background-color: #0e0d0d;
+    color: white;
+}
+.button1 {background-color: #4CAF50;} /* Green */
+.button2 {background-color: #008CBA;} /* Blue */

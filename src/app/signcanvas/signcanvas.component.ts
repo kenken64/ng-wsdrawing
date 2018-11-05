@@ -28,7 +28,8 @@ export class SigncanvasComponent implements AfterViewInit, OnDestroy, OnInit {
   drawingSubscription: Subscription;
   ioConnection: any;
   messages: any[] = [];
-  
+  colour: string = '#000';
+
   constructor(private ws: WsSocketService) {
     this.initIoConnection();
   }
@@ -41,6 +42,13 @@ export class SigncanvasComponent implements AfterViewInit, OnDestroy, OnInit {
     this.ws.disconnect();
     this.initIoConnection();
   }
+
+  changeMarkerColour(makerColour: string){
+    console.log(makerColour);
+    this.cx.strokeStyle = makerColour;
+  }
+
+
   private initIoConnection(): void {
     this.ws.initSocket();
 
@@ -58,10 +66,8 @@ export class SigncanvasComponent implements AfterViewInit, OnDestroy, OnInit {
             x1: message.x1,
             y1: message.y1
           };
-          
-        this.drawOnCanvas(prevPos, currentPos);
-         // this.cx.lineTo(message.x, message.y);
-         // this.cx.stroke();
+          this.cx.strokeStyle = message.colour;
+          this.drawOnCanvas(prevPos, currentPos);
         }else{
           const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
           this.cx.clearRect(0, 0, canvasEl.width, canvasEl.height);
@@ -83,20 +89,16 @@ export class SigncanvasComponent implements AfterViewInit, OnDestroy, OnInit {
   ngOnInit() {}
 
   ngAfterViewInit() {
-    // get the context
     const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
     this.cx = canvasEl.getContext('2d');
 
-    // set the width and height
     canvasEl.width = this.width;
     canvasEl.height = this.height;
 
-    // set some default properties about the line
     this.cx.lineWidth = 3;
     this.cx.lineCap = 'round';
-    this.cx.strokeStyle = '#000';
+    this.cx.strokeStyle = this.colour;
 
-    // we'll implement this method to start capturing mouse events
     this.captureEvents(canvasEl);
   }
 
@@ -120,6 +122,7 @@ export class SigncanvasComponent implements AfterViewInit, OnDestroy, OnInit {
 
         const currentPos = {
           type: 1,
+          colour: this.cx.strokeStyle,
           x1: res[1].clientX - rect.left,
           y1: res[1].clientY - rect.top
         };

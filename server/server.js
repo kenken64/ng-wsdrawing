@@ -8,7 +8,8 @@ socket.on('message', function(data) {
         y0: data.y0,
         x1: data.x1,
         y1: data.y1,
-        type: data.type
+        type: data.type,
+        colour: data.colour
     });
 });
 });
