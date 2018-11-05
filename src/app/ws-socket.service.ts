@@ -18,6 +18,11 @@ export class WsSocketService {
       this.socket = socketIo(SERVER_URL);
   }
 
+  public disconnect(): void {
+    this.socket.disconnect();
+}
+
+
   public send(message: any): void {
       this.socket.emit('message', message);
   }

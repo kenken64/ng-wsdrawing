@@ -21,8 +21,8 @@ import * as html2canvas from 'html2canvas';
 })
 export class SigncanvasComponent implements AfterViewInit, OnDestroy, OnInit {
 
-  @Input() width = 512;
-  @Input() height = 418;
+  @Input() width = 800;
+  @Input() height = 600;
   @ViewChild('canvas') canvas: ElementRef;
   cx: CanvasRenderingContext2D;
   drawingSubscription: Subscription;
@@ -38,6 +38,8 @@ export class SigncanvasComponent implements AfterViewInit, OnDestroy, OnInit {
     const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
     this.cx.clearRect(0, 0, canvasEl.width, canvasEl.height);
     this.ws.send({type:2});
+    this.ws.disconnect();
+    this.initIoConnection();
   }
   private initIoConnection(): void {
     this.ws.initSocket();
@@ -63,6 +65,7 @@ export class SigncanvasComponent implements AfterViewInit, OnDestroy, OnInit {
         }else{
           const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
           this.cx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+          this.messages = [];
         }
       });
 
@@ -98,7 +101,6 @@ export class SigncanvasComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   captureEvents(canvasEl: HTMLCanvasElement) {
-    // this will capture all mousedown events from teh canvas element
     this.drawingSubscription = fromEvent(canvasEl, 'mousedown')
       .pipe(
         switchMap(e => {
