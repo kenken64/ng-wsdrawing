@@ -44,18 +44,22 @@ export class SigncanvasComponent implements AfterViewInit, OnDestroy, OnInit {
 
     this.ioConnection = this.ws.onMessage()
       .subscribe((message: any) => {
-        
-        //this.messages.push(message);
+        //console.log(message);
+        this.messages.push(message);
         if(message.type == 1){
-          if (!this.cx) {
-            return;
-          }
-      
-          console.log(message);
-          this.cx.lineTo(message.x, message.y);
-          if(message.x > 0 && message.y > 0){
-            this.cx.stroke();
-          }
+          let prevPos = {
+            x0: message.x0,
+            y0: message.y0
+          };
+  
+          let currentPos = {
+            x1: message.x1,
+            y1: message.y1
+          };
+          
+        this.drawOnCanvas(prevPos, currentPos);
+         // this.cx.lineTo(message.x, message.y);
+         // this.cx.stroke();
         }else{
           const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
           this.cx.clearRect(0, 0, canvasEl.width, canvasEl.height);
@@ -108,29 +112,24 @@ export class SigncanvasComponent implements AfterViewInit, OnDestroy, OnInit {
       .subscribe((res: [MouseEvent, MouseEvent]) => {
         const rect = canvasEl.getBoundingClientRect();
         const prevPos = {
-          x: res[0].clientX - rect.left,
-          y: res[0].clientY - rect.top
+          x0: res[0].clientX - rect.left,
+          y0: res[0].clientY - rect.top
         };
 
         const currentPos = {
           type: 1,
-          prevPos: prevPos,
-          x: res[1].clientX - rect.left,
-          y: res[1].clientY - rect.top
+          x1: res[1].clientX - rect.left,
+          y1: res[1].clientY - rect.top
         };
         this.drawOnCanvas(prevPos, currentPos);
-        console.log("delay ? " + JSON.stringify(currentPos));
-        //console.log(res);
-        if(currentPos){
-          this.ws.send(currentPos);
-        }
-        
+        console.log(prevPos,currentPos)
+        this.ws.send({...prevPos,...currentPos});
       });
   }
 
   drawOnCanvas(
-    prevPos: { x: number; y: number },
-    currentPos: { x: number; y: number }
+    prevPos: { x0: number; y0: number },
+    currentPos: { x1: number; y1: number }
   ) {
     if (!this.cx) {
       return;
@@ -139,8 +138,8 @@ export class SigncanvasComponent implements AfterViewInit, OnDestroy, OnInit {
     this.cx.beginPath();
 
     if (prevPos) {
-      this.cx.moveTo(prevPos.x, prevPos.y); // from
-      this.cx.lineTo(currentPos.x, currentPos.y);
+      this.cx.moveTo(prevPos.x0, prevPos.y0); // from
+      this.cx.lineTo(currentPos.x1, currentPos.y1);
       this.cx.stroke();
     }
   }
