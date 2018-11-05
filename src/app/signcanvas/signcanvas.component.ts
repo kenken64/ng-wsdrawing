@@ -149,8 +149,7 @@ export class SigncanvasComponent implements AfterViewInit, OnDestroy, OnInit {
   ngOnDestroy() {
     this.drawingSubscription.unsubscribe();
   }
-
-
+  s
   saveasPDF(){
     html2canvas(document.getElementById('drawing')).then((canvas)=>{
       let img = canvas.toDataURL('image/png');

@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  ws_server: 'http://localhost:4000',
+  ws_server: 'https://green-bullfrog-81.localtunnel.me',
 };
