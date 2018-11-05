@@ -11,6 +11,8 @@ import { fromEvent, Subscription } from 'rxjs';
 import { pairwise, switchMap, takeUntil } from 'rxjs/operators';
 import { WsSocketService } from '../ws-socket.service';
 import { Event } from '../event';
+import * as jsPDF from 'jspdf';
+import * as html2canvas from 'html2canvas';
 
 @Component({
   selector: 'app-signcanvas',
@@ -134,4 +136,13 @@ export class SigncanvasComponent implements AfterViewInit, OnDestroy, OnInit {
     this.drawingSubscription.unsubscribe();
   }
 
+
+  saveasPDF(){
+    html2canvas(document.getElementById('drawing')).then((canvas)=>{
+      let img = canvas.toDataURL('image/png');
+      let doc = new jsPDF();
+      doc.addImage(img , 'JPEG', 5, 20);
+      doc.save('canvasdraw.pdf');
+    });
+  }
 }
