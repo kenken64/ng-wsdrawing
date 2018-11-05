@@ -2,6 +2,21 @@
 
 <img src="demo.gif"/>
 
+### Run Angular Web App
+```
+
+ng serve
+
+```
+
+### Run Server side
+```
+
+cd server
+node server.js
+
+```
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.2.4.
 
 ## Development server

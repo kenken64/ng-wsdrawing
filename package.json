@@ -22,6 +22,7 @@
     "@angular/router": "^6.1.0",
     "@types/html2canvas": "0.0.35",
     "@types/jspdf": "^1.1.31",
+    "canvas-prebuilt": "^2.0.0-alpha.14",
     "core-js": "^2.5.4",
     "html2canvas": "^1.0.0-alpha.12",
     "jspdf": "^1.4.1",
